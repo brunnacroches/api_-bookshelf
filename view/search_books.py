@@ -1,6 +1,6 @@
 from controller.get_books_controller import GetBooksByGenreController
 from cerberus import Validator
-from validators import validate_search_book_request_body
+from validators.validate_search_book import validate_search_book_request_body
 
 class SearchBookView:
     def view_books(self, request):
