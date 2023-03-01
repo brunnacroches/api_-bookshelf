@@ -1,8 +1,5 @@
+from cerberus import Validator
 from controller.create_book_controller import BookController
-from cerberus import Validator
-from validators.validate_create_book import validate_create_book_request_body
-
-from cerberus import Validator
 from validators.validate_create_book import validate_create_book_request_body
 
 class BookView:
