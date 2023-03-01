@@ -1,20 +1,27 @@
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy import ForeignKey
 
 Base = declarative_base()
 
+# Define a tabela de gêneros
+class GenreModel(Base):
+    __tablename__ = "genres"
 
-# Define a classe Book que herda de db.Model
+    id = Column(Integer, primary_key=True)
+    name = Column(String(20), nullable=False, unique=True)
+
+# Define a tabela de livros
 class BookModel(Base):
-    # Nome da tabela no banco de dados
     __tablename__ = "books"
 
-    # Define as colunas da tabela
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     year = Column(Integer, nullable=False)
-    genre = Column(String(20), nullable=False)
+    genre_id = Column(Integer, ForeignKey('genres.id'), nullable=False)
+    genre = relationship(GenreModel)
+
 
 class DataBase:
     def __init__(self):
@@ -24,13 +31,20 @@ class DataBase:
 
     def register_book(self, book):
         session = self.Session()
-        book_model = BookModel(name=book.name, year=book.year, genre=book.genre)
+        genre_model = session.query(GenreModel).filter_by(name=book.genre).first()
+        if not genre_model:
+            raise ValueError("Invalid genre")
+        book_model = BookModel(name=book.name, year=book.year, genre_id=genre_model.id)
         session.add(book_model)
         session.commit()
         session.close()
-    
+
     def search_book_genre(self, genre:str):
         session = self.Session()
-        book_model = session.query(BookModel).filter_by(genre=genre).first()
+        genre_model = session.query(GenreModel).filter_by(name=genre).first()
+        if not genre_model:
+            return []
+        books = session.query(BookModel).filter_by(genre_id=genre_model.id).all()
         session.close()
-        return book_model
+        return books
+
