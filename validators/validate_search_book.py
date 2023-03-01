@@ -6,4 +6,12 @@ def validate_search_book_request_body(request_body):
     }
     # Valida o body da requisição
     validator = Validator(search_book_schema)
-    return validator.validate(request_body), validator.errors
+    is_valid = validator.validate(request_body)
+    
+    validation_response = {
+        "is_valid": is_valid,
+        "error": validator.errors
+    }
+    
+    return validation_response
+    # return validator.validate(request_body), validator.errors

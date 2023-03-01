@@ -25,26 +25,42 @@ class BookModel(Base):
 
 class DataBase:
     def __init__(self):
-        self.engine = create_engine('sqlite:///my_database.db') #!! # Não existe o banco pessoas.db no projeto
+        self.engine = create_engine('sqlite:///my_database.db')
         Base.metadata.create_all(self.engine)
         self.Session = sessionmaker(bind=self.engine)
 
-    def register_book(self, book):
+# ! mudamos os parametros de 'book' para 'name','year' e 'genre' por conta da 
+# ! alteração no controller, corrigimos a redundancia então a criação e armazenamento
+# ! destes dados será aqui
+    def register_book(self, name:str, year: int, genre: str):
         session = self.Session()
-        genre_model = session.query(GenreModel).filter_by(name=book.genre).first()
+        # genre_model = session.query(GenreModel).filter_by(name=book.genre).first()
+        # ! desse modo não precisa mais chamar o 'book' no genre
+        genre_model = session.query(GenreModel).filter_by(name=genre).first()
         if not genre_model:
             raise ValueError("Invalid genre")
-        book_model = BookModel(name=book.name, year=book.year, genre_id=genre_model.id)
+        # ! e também não precisa chamar mais o book no name e year
+        # book_model = BookModel(name=book.name, year=book.year, genre_id=genre_model.id)
+        book_model = BookModel(name=name, year=year, genre_id=genre_model.id)
         session.add(book_model)
         session.commit()
         session.close()
 
     def search_book_genre(self, genre:str):
+        # Aqui inicializamos a sessão
         session = self.Session()
+        # Criamos o filtro de busca pelo nome do género
         genre_model = session.query(GenreModel).filter_by(name=genre).first()
+
+        # se o nome não estiver dentro da lista de géneros disponíveis
         if not genre_model:
+            # retornará uma lista vazia
             return []
+        # se tiver inicia uma outra sessão filtrando e apresentando todos os nomes
+        # de livros que tem naquele genero buscado
         books = session.query(BookModel).filter_by(genre_id=genre_model.id).all()
+        # depois disso encerra a sessão
         session.close()
+        # e retorna os livros
         return books
 
