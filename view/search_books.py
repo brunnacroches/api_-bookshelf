@@ -5,13 +5,6 @@ from validators.validate_search_book import validate_search_book_request_body
 class SearchBookView:
     def view_books(self, request):
         # Valida o body da requisição
-        # validator = Validator(validate_search_book_request_body())
-        # is_valid = validator.validate(request.json)
-        # errors = validator.errors
-        # if not is_valid:
-        #     return {"status_code": 400, "error": errors, "success": False}
-    
-        # Valida o body da requisição
         validation_response = validate_search_book_request_body(request.json)
         if not validation_response["is_valid"]:
             return {"status_code": 400, "data": {"error": validation_response["error"]}}

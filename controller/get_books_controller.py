@@ -6,8 +6,6 @@ class GetBooksByGenreController(BookController):
     def __init__(self):
         self.db_repository = DataBase()
 
-    def get_books_by_genre(self, genre):
-        books = self.db_repository.search_book_genre(genre)
-        return books
-        # DataBase.query.filter_by(genre=genre).all()
+    def get_books_by_genre(self, genre:str):
+        self.db_repository.search_book_genre(genre)
     

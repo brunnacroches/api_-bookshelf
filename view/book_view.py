@@ -5,14 +5,6 @@ from validators.validate_create_book import validate_create_book_request_body
 class BookView:
     def view_books(self, request):
         # Valida o body da requisição
-        # create_book_schema = validate_create_book_request_body(request.json)
-        # validator = Validator(create_book_schema)
-        # is_valid = validator.validate(request.json)
-        # errors = validator.errors
-        # if not is_valid:
-        #     return {"status_code": 400, "error": errors, "success": False}
-
-        # Valida o body da requisição
         validation_response = validate_create_book_request_body(request.json)
         if not validation_response["is_valid"]:
             return {"status_code":400, "data": { "error" : validation_response["error"]}}
